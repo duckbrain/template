@@ -1,35 +1,58 @@
-# Welcome to Buffalo!
+# My Template Stack
 
-Thank you for choosing Buffalo for your web development needs.
+This repo is to set up a template I can clone for new projects. Parts may be refactored out of here as they solidify, so they can be updated in the cloned projects.
 
-## Database Setup
+- Code gen/compiling/testing (CI) should not require binaries besides `go` and `yarn`
+- Dev environment
+  - `.editorconfig`
+  - [ ] `docker-compose up` and running (avoid Dockerfile for dev; include public image if needed)
+    - [ ] Handle running as current user?
+  - [ ] `go run` CLI for codegen/tasks
+  - [ ] Commands work from root of project
+  - [ ] vscode configuration
+- CI/CD (GitLab CI)
+  - [ ] multistage Dockerfile deployment
+  - [ ] Beluga Deployment
+  - [ ] Pages deployment (vite index.html)
+  - [ ] Review apps
+- Backend (Go)
+  - [ ] golangci-lint
+  - [x] go mod
+  - [ ] gqlgen
+  - [ ] Models
+    - [ ] Pop/Fizz w/o config file?
+    - [ ] Repository layer (sqlboiler?)
+  - [ ] Tests
+    - [ ] Optional DB tests?
+    - [ ] Fixtures/schaffolding
+    - [ ] Migration test/database
+  - [ ] model/migration/dblayer code-generator
+  - [ ] cobra for built-in CLI
+  - [ ] database migrations
+  - [ ] HTML templating w/ VScode syntax support
+- Front-end (Typescript/Vue)
+  - [ ] eslint? (publish a preset?)
+  - [ ] vite
+  - [ ] prettier
+  - [ ] bootstrap-vue
+  - [ ] vue-router
+  - [ ] vuex?
+  - [ ] components
+    - [ ] layout template
+    - [ ] dev demo output
 
-It looks like you chose to set up your application using a database! Fantastic!
+- Functionality
+  - [ ] Users/auth
+  - [ ] Password set/reset email
+  - [ ] Permissions
+  - [ ] i18n?
 
-The first thing you need to do is open up the "database.yml" file and edit it to use the correct usernames, passwords, hosts, etc... that are appropriate for your environment.
+- Build types
+  - Debug: source code/tooling present
+  - Release: self-containtained single binary
 
-You will also need to make sure that **you** start/install the database of your choice. Buffalo **won't** install and start it for you.
+Files/Directories:
 
-### Create Your Databases
-
-Ok, so you've edited the "database.yml" file and started your database, now Buffalo can create the databases in that file for you:
-
-	$ buffalo pop create -a
-
-## Starting the Application
-
-Buffalo ships with a command that will watch your application and automatically rebuild the Go binary and any assets for you. To do that run the "buffalo dev" command:
-
-	$ buffalo dev
-
-If you point your browser to [http://127.0.0.1:3000](http://127.0.0.1:3000) you should see a "Welcome to Buffalo!" page.
-
-**Congratulations!** You now have your Buffalo application up and running.
-
-## What Next?
-
-We recommend you heading over to [http://gobuffalo.io](http://gobuffalo.io) and reviewing all of the great documentation there.
-
-Good luck!
-
-[Powered by Buffalo](http://gobuffalo.io)
+- `assets/` front-end source/assets
+  - 
+- `public/` (gitignored), output of assets 

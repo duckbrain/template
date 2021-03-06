@@ -6,7 +6,9 @@ import (
 )
 
 var r *render.Engine
-var assetsBox = packr.New("app:assets", "../public")
+
+var assetsBox = packr.New("app:assets", "../assets/public")
+var templateBox = packr.New("app:templates", "../templates")
 
 func init() {
 	r = render.New(render.Options{
@@ -14,15 +16,10 @@ func init() {
 		HTMLLayout: "application.plush.html",
 
 		// Box containing all of the templates:
-		TemplatesBox: packr.New("app:templates", "../templates"),
+		TemplatesBox: templateBox,
 		AssetsBox:    assetsBox,
 
 		// Add template helpers here:
-		Helpers: render.Helpers{
-			// for non-bootstrap form helpers uncomment the lines
-			// below and import "github.com/gobuffalo/helpers/forms"
-			// forms.FormKey:     forms.Form,
-			// forms.FormForKey:  forms.FormFor,
-		},
+		Helpers: render.Helpers{},
 	})
 }
