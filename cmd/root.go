@@ -32,12 +32,15 @@ var RootCmd = &cobra.Command{
 var p = services.Provider{
 	Config: services.Config{
 		Environment: "development",
-		ListenAddr:  "0.0.0.0",
+		ListenAddr:  "0.0.0.0:3000",
 		LogLevel:    logger.DebugLevel,
 	},
 }
 
 func init() {
+	RootCmd.Flags().String("addr", "", "Listen address for the application")
+	must(viper.BindPFlag("ListenAddr", RootCmd.Flag("addr")))
+
 	viper.SetConfigName(AppName)
 	viper.SetEnvPrefix(AppName)
 	viper.SetConfigType("yaml")
