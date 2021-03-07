@@ -7,7 +7,10 @@ import (
 	"github.com/duckbrain/shiboleet/actions"
 	"github.com/duckbrain/shiboleet/services"
 	"github.com/gobuffalo/logger"
+	"github.com/gobuffalo/packd"
+	"github.com/gobuffalo/packr/v2"
 	"github.com/mitchellh/mapstructure"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -17,7 +20,11 @@ const AppName = "shiboleet"
 var RootCmd = &cobra.Command{
 	Use: AppName,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		return viper.Unmarshal(&p.Config)
+		err := viper.Unmarshal(&p.Config)
+		if err != nil {
+			return errors.Wrap(err, "config")
+		}
+		return p.Init()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		app := actions.App(p)
@@ -29,6 +36,7 @@ var RootCmd = &cobra.Command{
 	},
 }
 
+var MigrationBox packd.Box = packr.New("migrations", "../migrations")
 var p = services.Provider{
 	Config: services.Config{
 		Environment: "development",

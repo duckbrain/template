@@ -1,6 +1,9 @@
 package services
 
-import "github.com/gobuffalo/logger"
+import (
+	"github.com/gobuffalo/logger"
+	"github.com/gobuffalo/pop/v5"
+)
 
 type Config struct {
 	// Environment the application will be running in, eg: "development" and "production"
@@ -11,8 +14,21 @@ type Config struct {
 	Host       string // Absolute URL the application will be accessed through
 
 	LogLevel logger.Level
+
+	Database *pop.ConnectionDetails
 }
 
 type Provider struct {
 	Config
+	DatabaseConnection *pop.Connection
+}
+
+func (p Provider) Init() error {
+	c, err := pop.NewConnection(p.Database)
+	if err != nil {
+		return err
+	}
+	p.DatabaseConnection = c
+
+	return nil
 }
