@@ -9,6 +9,7 @@ import (
 	"github.com/gobuffalo/logger"
 	"github.com/gobuffalo/packd"
 	"github.com/gobuffalo/packr/v2"
+	"github.com/gobuffalo/pop/v5"
 	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -27,21 +28,30 @@ var RootCmd = &cobra.Command{
 		return p.Init()
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		app := actions.App(p)
-		app.Options.Name = AppName
-		app.Options.Addr = p.Config.ListenAddr
-		app.Options.Env = p.Environment
-		app.Options.SessionName = AppName
-		return app.Serve()
+		return actions.NewApp(p).Serve()
 	},
 }
 
 var MigrationBox packd.Box = packr.New("migrations", "../migrations")
 var p = services.Provider{
+	AppName: AppName,
 	Config: services.Config{
 		Environment: "development",
 		ListenAddr:  "0.0.0.0:3000",
 		LogLevel:    logger.DebugLevel,
+		Database: &pop.ConnectionDetails{
+			Dialect:  "postgres",
+			Host:     "localhost",
+			User:     "postgres",
+			Database: AppName,
+		},
+		Assets: struct {
+			Type                  string
+			ManifestPath          string
+			DevelopmentServerPath string
+		}{
+			Type: "vite",
+		},
 	},
 }
 

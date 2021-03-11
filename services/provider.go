@@ -16,9 +16,16 @@ type Config struct {
 	LogLevel logger.Level
 
 	Database *pop.ConnectionDetails
+
+	Assets struct {
+		Type                  string
+		ManifestPath          string
+		DevelopmentServerPath string
+	}
 }
 
 type Provider struct {
+	AppName string
 	Config
 	DatabaseConnection *pop.Connection
 }
