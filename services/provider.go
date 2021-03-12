@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/duckbrain/shiboleet/lib/assets"
 	"github.com/gobuffalo/logger"
 	"github.com/gobuffalo/pop/v5"
 )
@@ -17,11 +18,7 @@ type Config struct {
 
 	Database *pop.ConnectionDetails
 
-	Assets struct {
-		Type                  string
-		ManifestPath          string
-		DevelopmentServerPath string
-	}
+	Assets assets.Config
 }
 
 type Provider struct {

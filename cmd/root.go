@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/duckbrain/shiboleet/actions"
+	"github.com/duckbrain/shiboleet/lib/assets"
 	"github.com/duckbrain/shiboleet/services"
 	"github.com/gobuffalo/logger"
 	"github.com/gobuffalo/packd"
@@ -45,11 +46,7 @@ var p = services.Provider{
 			User:     "postgres",
 			Database: AppName,
 		},
-		Assets: struct {
-			Type                  string
-			ManifestPath          string
-			DevelopmentServerPath string
-		}{
+		Assets: assets.Config{
 			Type: "vite",
 		},
 	},
