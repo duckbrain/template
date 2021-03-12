@@ -12,9 +12,14 @@ var BoilCmd = &cobra.Command{
 	Use: "boil",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		config := &boilingcore.Config{
-			DriverName: "pqsl",
+			DriverName: "psql",
 			DriverConfig: drivers.Config{
-				"dbname": "shiboleet",
+				"dbname":    "shiboleet",
+				"user":      "postgres",
+				"password":  "postgres",
+				"host":      "localhost",
+				"sslmode":   "disable",
+				"blacklist": []string{"schema_migration"},
 			},
 		}
 		core, err := boilingcore.New(config)
