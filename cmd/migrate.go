@@ -1,15 +1,14 @@
-package db
+package cmd
 
 import (
 	"os"
 
-	"github.com/duckbrain/shiboleet/services"
 	"github.com/gobuffalo/packd"
 	"github.com/gobuffalo/pop/v5"
 	"github.com/spf13/cobra"
 )
 
-func MigrateCmd(p *services.Provider, box packd.Box) *cobra.Command {
+func MigrateCmd(c *pop.Connection, box packd.Box) *cobra.Command {
 	m := &cobra.Command{
 		Use: "migrate",
 	}
@@ -17,8 +16,13 @@ func MigrateCmd(p *services.Provider, box packd.Box) *cobra.Command {
 	var mb pop.MigrationBox
 
 	prepMB := func(cmd *cobra.Command, args []string) (err error) {
-		mb, err = pop.NewMigrationBox(box, p.DatabaseConnection)
+		mb, err = pop.NewMigrationBox(box, c)
 		return
+	}
+
+	prepDB := func(cmd *cobra.Command, args []string) error {
+		_ = pop.CreateDB(c)
+		return prepMB(cmd, args)
 	}
 
 	var steps int
@@ -29,8 +33,22 @@ func MigrateCmd(p *services.Provider, box packd.Box) *cobra.Command {
 	}
 
 	m.AddCommand(withSteps(&cobra.Command{
-		Use:     "up",
+		Use:     "create",
 		PreRunE: prepMB,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return pop.CreateDB(c)
+		},
+	}))
+	m.AddCommand(withSteps(&cobra.Command{
+		Use:     "drop",
+		PreRunE: prepMB,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return pop.DropDB(c)
+		},
+	}))
+	m.AddCommand(withSteps(&cobra.Command{
+		Use:     "up",
+		PreRunE: prepDB,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return mb.Up()
 		},
@@ -56,13 +74,11 @@ func MigrateCmd(p *services.Provider, box packd.Box) *cobra.Command {
 			return mb.Status(os.Stdout)
 		},
 	})
-	m.AddCommand(&cobra.Command{
-		Use:     "init",
-		PreRunE: prepMB,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return mb.CreateSchemaMigrations()
-		},
-	})
 
 	return m
+}
+
+func init() {
+	GenerateCmd.AddCommand(MigrateCmd(p.DatabaseConnection, MigrationBox))
+	RootCmd.AddCommand(MigrateCmd(p.DatabaseConnection, MigrationBox))
 }

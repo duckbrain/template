@@ -27,7 +27,15 @@ type Provider struct {
 	DatabaseConnection *pop.Connection
 }
 
-func (p Provider) Init() error {
+func (p Provider) Must() *Provider {
+	err := p.Init()
+	if err != nil {
+		panic(err)
+	}
+	return &p
+}
+
+func (p *Provider) Init() error {
 	c, err := pop.NewConnection(p.Database)
 	if err != nil {
 		return err

@@ -50,7 +50,7 @@ var p = services.Provider{
 			Type: "vite",
 		},
 	},
-}
+}.Must()
 
 func init() {
 	RootCmd.Flags().String("addr", "", "Listen address for the application")

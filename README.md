@@ -36,7 +36,6 @@ This repo is to set up a template I can clone for new projects. Parts may be ref
   - [ ] prettier
   - [ ] bootstrap-vue
   - [ ] vue-router
-  - [ ] vuex?
   - [ ] components
     - [ ] layout template
     - [ ] dev demo output

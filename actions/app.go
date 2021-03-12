@@ -13,7 +13,7 @@ type App struct {
 	r *render.Engine
 }
 
-func NewApp(provider services.Provider) *App {
+func NewApp(provider *services.Provider) *App {
 	a := &App{App: buffalo.New(buffalo.Options{
 		Env:    provider.Environment,
 		Addr:   provider.ListenAddr,
