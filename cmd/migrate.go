@@ -32,32 +32,35 @@ func MigrateCmd(c *pop.Connection, box packd.Box) *cobra.Command {
 		return c
 	}
 
-	m.AddCommand(withSteps(&cobra.Command{
+	m.AddCommand(&cobra.Command{
 		Use:     "create",
 		PreRunE: prepMB,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return pop.CreateDB(c)
 		},
-	}))
-	m.AddCommand(withSteps(&cobra.Command{
+	})
+	m.AddCommand(&cobra.Command{
 		Use:     "drop",
 		PreRunE: prepMB,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return pop.DropDB(c)
 		},
-	}))
+	})
 	m.AddCommand(withSteps(&cobra.Command{
 		Use:     "up",
 		PreRunE: prepDB,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return mb.Up()
+			_, err := mb.UpTo(steps)
+			// TODO log that not all the steps were done
+			// if steps > 1 && s != steps {
+			return err
 		},
 	}))
 	m.AddCommand(withSteps(&cobra.Command{
 		Use:     "down",
 		PreRunE: prepMB,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return mb.Down(1)
+			return mb.Down(steps)
 		},
 	}))
 	m.AddCommand(&cobra.Command{

@@ -6,6 +6,7 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/boilingcore"
 	"github.com/volatiletech/sqlboiler/v4/drivers"
 	_ "github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-psql/driver"
+	"github.com/volatiletech/sqlboiler/v4/importers"
 )
 
 var BoilCmd = &cobra.Command{
@@ -21,6 +22,9 @@ var BoilCmd = &cobra.Command{
 				"sslmode":   "disable",
 				"blacklist": []string{"schema_migration"},
 			},
+			OutFolder: "models",
+			PkgName:   "models",
+			Imports:   importers.NewDefaultImports(),
 		}
 		core, err := boilingcore.New(config)
 		if err != nil {
