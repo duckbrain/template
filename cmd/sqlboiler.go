@@ -36,4 +36,6 @@ var BoilCmd = &cobra.Command{
 
 func init() {
 	GenerateCmd.AddCommand(BoilCmd)
+
+	afterMigrateHook = BoilCmd.RunE
 }

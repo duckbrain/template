@@ -8,6 +8,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// In debug, is overridden with sqlboiler's RunE.
+var afterMigrateHook = func(cmd *cobra.Command, args []string) error {
+	return nil
+}
+
 func MigrateCmd(c *pop.Connection, box packd.Box) *cobra.Command {
 	m := &cobra.Command{
 		Use: "migrate",
@@ -23,6 +28,10 @@ func MigrateCmd(c *pop.Connection, box packd.Box) *cobra.Command {
 	prepDB := func(cmd *cobra.Command, args []string) error {
 		_ = pop.CreateDB(c)
 		return prepMB(cmd, args)
+	}
+
+	postMigrate := func(cmd *cobra.Command, args []string) error {
+		return afterMigrateHook(cmd, args)
 	}
 
 	var steps int
@@ -47,8 +56,9 @@ func MigrateCmd(c *pop.Connection, box packd.Box) *cobra.Command {
 		},
 	})
 	m.AddCommand(withSteps(&cobra.Command{
-		Use:     "up",
-		PreRunE: prepDB,
+		Use:      "up",
+		PreRunE:  prepDB,
+		PostRunE: postMigrate,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			_, err := mb.UpTo(steps)
 			// TODO log that not all the steps were done
@@ -64,8 +74,9 @@ func MigrateCmd(c *pop.Connection, box packd.Box) *cobra.Command {
 		},
 	}))
 	m.AddCommand(&cobra.Command{
-		Use:     "reset",
-		PreRunE: prepMB,
+		Use:      "reset",
+		PreRunE:  prepMB,
+		PostRunE: postMigrate,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return mb.Reset()
 		},
