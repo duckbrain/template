@@ -5,10 +5,16 @@ package gql
 
 import (
 	"context"
+
+	"github.com/duckbrain/shiboleet/models"
 )
 
 func (r *queryResolver) Hello(ctx context.Context) (string, error) {
 	return "World!", nil
+}
+
+func (r *queryResolver) Users(ctx context.Context) ([]*models.User, error) {
+	return models.Users().All(ctx, r.DB())
 }
 
 // Query returns QueryResolver implementation.

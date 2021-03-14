@@ -4,6 +4,7 @@ import (
 	"github.com/duckbrain/shiboleet/lib/assets"
 	"github.com/gobuffalo/logger"
 	"github.com/gobuffalo/pop/v5"
+	"github.com/volatiletech/sqlboiler/v4/boil"
 )
 
 type Config struct {
@@ -42,5 +43,12 @@ func (p *Provider) Init() error {
 	}
 	p.DatabaseConnection = c
 
-	return nil
+	return c.Open()
+}
+
+func (p *Provider) DB() boil.ContextExecutor {
+	if p.DatabaseConnection.TX != nil {
+		return p.DatabaseConnection.TX
+	}
+	return p.DatabaseConnection.Store.(boil.ContextExecutor)
 }
