@@ -1,10 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-	"io/fs"
-	"path/filepath"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -16,32 +12,9 @@ var GqlGenCmd = &cobra.Command{
 	Use: "gqlgen",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cfg, err := config.LoadConfigFromDefaultLocations()
-		if err == fs.ErrNotExist {
-			cfg = config.DefaultConfig()
-		} else if err != nil {
+		if err != nil {
 			return errors.Wrap(err, "load config")
 		}
-		cfg.SchemaFilename, err = filepath.Glob("actions/schema/*.graphqls")
-		if err != nil {
-			return errors.Wrap(err, "schema glob")
-		}
-		fmt.Println(cfg.SchemaFilename)
-		cfg.Resolver = config.ResolverConfig{
-			Layout:           "follow-schema",
-			DirName:          "actions/gql",
-			Package:          "gql",
-			FilenameTemplate: "{name}.resolvers.go",
-		}
-		cfg.Model = config.PackageConfig{
-			Filename: "models/models_gen.go",
-			Package:  "models",
-		}
-		cfg.Exec = config.PackageConfig{
-			Filename: "actions/gql/executor_gen.go",
-			Package:  "gql",
-		}
-		cfg.AutoBind = config.StringList{"github.com/duckbrain/shiboleet/models"}
-
 		return api.Generate(cfg)
 		// api.AddPlugin(gbgen.NewConvertPlugin(
 		// 	output,   // directory where convert.go, convert_input.go and preload.go should live

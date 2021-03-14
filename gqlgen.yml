@@ -1,0 +1,38 @@
+schema:
+  - actions/schema/*.graphqls
+
+exec:
+  filename: actions/gql/executor_gen.go
+  package: gql
+
+resolver:
+  layout: follow-schema
+  dir: actions/gql
+  package: gql
+  filename_template: "{name}.resolvers.go"
+
+model:
+  filename: models/models_gen.go
+  package: models
+
+
+autobind:
+  - "github.com/duckbrain/shiboleet/models"
+
+# This section declares type mapping between the GraphQL and go type systems
+#
+# The first line in each type will be used as defaults for resolver arguments and
+# modelgen, the others will be allowed when binding to fields. Configure them to
+# your liking
+models:
+  ID:
+    model:
+      - github.com/99designs/gqlgen/graphql.ID
+      - github.com/99designs/gqlgen/graphql.Int
+      - github.com/99designs/gqlgen/graphql.Int64
+      - github.com/99designs/gqlgen/graphql.Int32
+  Int:
+    model:
+      - github.com/99designs/gqlgen/graphql.Int
+      - github.com/99designs/gqlgen/graphql.Int64
+      - github.com/99designs/gqlgen/graphql.Int32
