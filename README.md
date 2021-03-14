@@ -26,6 +26,10 @@ This repo is to set up a template I can clone for new projects. Parts may be ref
     - [ ] Optional DB tests?
     - [ ] Fixtures/schaffolding
     - [ ] Migration test/database
+  - [ ] Auth library with built-in and oauth
+    - https://github.com/qor/auth ?
+    - https://github.com/volatiletech/authboss ?
+    - https://github.com/avelino/awesome-go#authentication-and-oauth
   - [ ] model/migration/dblayer code-generator
   - [ ] cobra for built-in CLI
   - [ ] database migrations
