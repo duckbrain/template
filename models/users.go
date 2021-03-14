@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/friendsofgo/errors"
+	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
@@ -23,91 +24,94 @@ import (
 
 // User is an object representing the database table.
 type User struct {
-	ID        string    `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Name      string    `boil:"name" json:"name" toml:"name" yaml:"name"`
-	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
-	UpdatedAt time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
+	ID           string    `boil:"id" json:"id" toml:"id" yaml:"id"`
+	Name         string    `boil:"name" json:"name" toml:"name" yaml:"name"`
+	Username     string    `boil:"username" json:"username" toml:"username" yaml:"username"`
+	Provider     string    `boil:"provider" json:"provider" toml:"provider" yaml:"provider"`
+	PasswordHash string    `boil:"password_hash" json:"password_hash" toml:"password_hash" yaml:"password_hash"`
+	ConfirmedAt  null.Time `boil:"confirmed_at" json:"confirmed_at,omitempty" toml:"confirmed_at" yaml:"confirmed_at,omitempty"`
+	CreatedAt    time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	UpdatedAt    time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 
 	R *userR `boil:"" json:"" toml:"" yaml:""`
 	L userL  `boil:"-" json:"-" toml:"-" yaml:"-"`
 }
 
 var UserColumns = struct {
-	ID        string
-	Name      string
-	CreatedAt string
-	UpdatedAt string
+	ID           string
+	Name         string
+	Username     string
+	Provider     string
+	PasswordHash string
+	ConfirmedAt  string
+	CreatedAt    string
+	UpdatedAt    string
 }{
-	ID:        "id",
-	Name:      "name",
-	CreatedAt: "created_at",
-	UpdatedAt: "updated_at",
+	ID:           "id",
+	Name:         "name",
+	Username:     "username",
+	Provider:     "provider",
+	PasswordHash: "password_hash",
+	ConfirmedAt:  "confirmed_at",
+	CreatedAt:    "created_at",
+	UpdatedAt:    "updated_at",
 }
 
 // Generated where
 
-type whereHelperstring struct{ field string }
+type whereHelpernull_Time struct{ field string }
 
-func (w whereHelperstring) EQ(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
-func (w whereHelperstring) NEQ(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
-func (w whereHelperstring) LT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
-func (w whereHelperstring) LTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
-func (w whereHelperstring) GT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
-func (w whereHelperstring) GTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
-func (w whereHelperstring) IN(slice []string) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
+func (w whereHelpernull_Time) EQ(x null.Time) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, false, x)
 }
-func (w whereHelperstring) NIN(slice []string) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
+func (w whereHelpernull_Time) NEQ(x null.Time) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, true, x)
 }
-
-type whereHelpertime_Time struct{ field string }
-
-func (w whereHelpertime_Time) EQ(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.EQ, x)
-}
-func (w whereHelpertime_Time) NEQ(x time.Time) qm.QueryMod {
-	return qmhelper.Where(w.field, qmhelper.NEQ, x)
-}
-func (w whereHelpertime_Time) LT(x time.Time) qm.QueryMod {
+func (w whereHelpernull_Time) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
+func (w whereHelpernull_Time) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
+func (w whereHelpernull_Time) LT(x null.Time) qm.QueryMod {
 	return qmhelper.Where(w.field, qmhelper.LT, x)
 }
-func (w whereHelpertime_Time) LTE(x time.Time) qm.QueryMod {
+func (w whereHelpernull_Time) LTE(x null.Time) qm.QueryMod {
 	return qmhelper.Where(w.field, qmhelper.LTE, x)
 }
-func (w whereHelpertime_Time) GT(x time.Time) qm.QueryMod {
+func (w whereHelpernull_Time) GT(x null.Time) qm.QueryMod {
 	return qmhelper.Where(w.field, qmhelper.GT, x)
 }
-func (w whereHelpertime_Time) GTE(x time.Time) qm.QueryMod {
+func (w whereHelpernull_Time) GTE(x null.Time) qm.QueryMod {
 	return qmhelper.Where(w.field, qmhelper.GTE, x)
 }
 
 var UserWhere = struct {
-	ID        whereHelperstring
-	Name      whereHelperstring
-	CreatedAt whereHelpertime_Time
-	UpdatedAt whereHelpertime_Time
+	ID           whereHelperstring
+	Name         whereHelperstring
+	Username     whereHelperstring
+	Provider     whereHelperstring
+	PasswordHash whereHelperstring
+	ConfirmedAt  whereHelpernull_Time
+	CreatedAt    whereHelpertime_Time
+	UpdatedAt    whereHelpertime_Time
 }{
-	ID:        whereHelperstring{field: "\"users\".\"id\""},
-	Name:      whereHelperstring{field: "\"users\".\"name\""},
-	CreatedAt: whereHelpertime_Time{field: "\"users\".\"created_at\""},
-	UpdatedAt: whereHelpertime_Time{field: "\"users\".\"updated_at\""},
+	ID:           whereHelperstring{field: "\"users\".\"id\""},
+	Name:         whereHelperstring{field: "\"users\".\"name\""},
+	Username:     whereHelperstring{field: "\"users\".\"username\""},
+	Provider:     whereHelperstring{field: "\"users\".\"provider\""},
+	PasswordHash: whereHelperstring{field: "\"users\".\"password_hash\""},
+	ConfirmedAt:  whereHelpernull_Time{field: "\"users\".\"confirmed_at\""},
+	CreatedAt:    whereHelpertime_Time{field: "\"users\".\"created_at\""},
+	UpdatedAt:    whereHelpertime_Time{field: "\"users\".\"updated_at\""},
 }
 
 // UserRels is where relationship names are stored.
 var UserRels = struct {
-}{}
+	SignInAttempts string
+}{
+	SignInAttempts: "SignInAttempts",
+}
 
 // userR is where relationships are stored.
 type userR struct {
+	SignInAttempts SignInAttemptSlice `boil:"SignInAttempts" json:"SignInAttempts" toml:"SignInAttempts" yaml:"SignInAttempts"`
 }
 
 // NewStruct creates a new relationship struct
@@ -119,8 +123,8 @@ func (*userR) NewStruct() *userR {
 type userL struct{}
 
 var (
-	userAllColumns            = []string{"id", "name", "created_at", "updated_at"}
-	userColumnsWithoutDefault = []string{"id", "name", "created_at", "updated_at"}
+	userAllColumns            = []string{"id", "name", "username", "provider", "password_hash", "confirmed_at", "created_at", "updated_at"}
+	userColumnsWithoutDefault = []string{"id", "name", "username", "provider", "password_hash", "confirmed_at", "created_at", "updated_at"}
 	userColumnsWithDefault    = []string{}
 	userPrimaryKeyColumns     = []string{"id"}
 )
@@ -398,6 +402,178 @@ func (q userQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool,
 	}
 
 	return count > 0, nil
+}
+
+// SignInAttempts retrieves all the sign_in_attempt's SignInAttempts with an executor.
+func (o *User) SignInAttempts(mods ...qm.QueryMod) signInAttemptQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("\"sign_in_attempts\".\"user_id\"=?", o.ID),
+	)
+
+	query := SignInAttempts(queryMods...)
+	queries.SetFrom(query.Query, "\"sign_in_attempts\"")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"\"sign_in_attempts\".*"})
+	}
+
+	return query
+}
+
+// LoadSignInAttempts allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (userL) LoadSignInAttempts(ctx context.Context, e boil.ContextExecutor, singular bool, maybeUser interface{}, mods queries.Applicator) error {
+	var slice []*User
+	var object *User
+
+	if singular {
+		object = maybeUser.(*User)
+	} else {
+		slice = *maybeUser.(*[]*User)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &userR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &userR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`sign_in_attempts`),
+		qm.WhereIn(`sign_in_attempts.user_id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load sign_in_attempts")
+	}
+
+	var resultSlice []*SignInAttempt
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice sign_in_attempts")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on sign_in_attempts")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for sign_in_attempts")
+	}
+
+	if len(signInAttemptAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.SignInAttempts = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &signInAttemptR{}
+			}
+			foreign.R.User = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.UserID {
+				local.R.SignInAttempts = append(local.R.SignInAttempts, foreign)
+				if foreign.R == nil {
+					foreign.R = &signInAttemptR{}
+				}
+				foreign.R.User = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// AddSignInAttempts adds the given related objects to the existing relationships
+// of the user, optionally inserting them as new records.
+// Appends related to o.R.SignInAttempts.
+// Sets related.R.User appropriately.
+func (o *User) AddSignInAttempts(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*SignInAttempt) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.UserID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE \"sign_in_attempts\" SET %s WHERE %s",
+				strmangle.SetParamNames("\"", "\"", 1, []string{"user_id"}),
+				strmangle.WhereClause("\"", "\"", 2, signInAttemptPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.UserID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &userR{
+			SignInAttempts: related,
+		}
+	} else {
+		o.R.SignInAttempts = append(o.R.SignInAttempts, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &signInAttemptR{
+				User: o,
+			}
+		} else {
+			rel.R.User = o
+		}
+	}
+	return nil
 }
 
 // Users retrieves all the records using an executor.

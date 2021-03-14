@@ -1,4 +1,14 @@
 create_table("users") {
     t.Column("id", "uuid", {primary: true})
     t.Column("name", "text")
+    t.Column("username", "text")
+    t.Column("provider", "text")
+    t.Column("password_hash", "text")
+    t.Column("confirmed_at", "timestamp", {null: true})
+}
+create_table("sign_in_attempts") {
+    t.Column("id", "uuid", {primary: true})
+    t.Column("user_id", "uuid")
+    t.ForeignKey("user_id", {"users": ["id"]})
+
 }

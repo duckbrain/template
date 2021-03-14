@@ -3,7 +3,9 @@ module github.com/duckbrain/shiboleet
 go 1.16
 
 require (
+	github.com/99designs/gqlgen v0.13.0
 	github.com/Masterminds/semver/v3 v3.1.1 // indirect
+	github.com/agnivade/levenshtein v1.1.0 // indirect
 	github.com/cockroachdb/cockroach-go v2.0.1+incompatible // indirect
 	github.com/fatih/color v1.10.0 // indirect
 	github.com/friendsofgo/errors v0.9.2
@@ -38,13 +40,17 @@ require (
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/viper v1.7.1
+	github.com/vektah/gqlparser/v2 v2.1.0
+	github.com/volatiletech/null v8.0.0+incompatible // indirect
+	github.com/volatiletech/null/v8 v8.1.2
+	github.com/volatiletech/sqlboiler v3.7.1+incompatible // indirect
 	github.com/volatiletech/sqlboiler/v4 v4.4.0
 	github.com/volatiletech/strmangle v0.0.1
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83 // indirect
 	golang.org/x/mod v0.4.2 // indirect
 	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.0.0-20210313110737-8e9fff1a3a18 // indirect
+	golang.org/x/sys v0.0.0-20210313202042-bd2e13477e9c // indirect
 	golang.org/x/term v0.0.0-20210220032956-6a3ed077a48d // indirect
 	golang.org/x/text v0.3.5 // indirect
 	golang.org/x/tools v0.1.0 // indirect

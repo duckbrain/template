@@ -25,6 +25,7 @@ var BoilCmd = &cobra.Command{
 			OutFolder: "models",
 			PkgName:   "models",
 			Imports:   importers.NewDefaultImports(),
+			Wipe:      true,
 		}
 		core, err := boilingcore.New(config)
 		if err != nil {
