@@ -1,6 +1,7 @@
-package cmd
+package main
 
 import (
+	"github.com/duckbrain/shiboleet/lib/runner"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -36,6 +37,6 @@ var GqlGenCmd = &cobra.Command{
 	},
 }
 
-func init() {
-	RootCmd.AddCommand(GqlGenCmd)
+func main() {
+	runner.Main(GqlGenCmd)
 }

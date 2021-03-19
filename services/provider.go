@@ -1,25 +1,13 @@
 package services
 
 import (
-	"github.com/duckbrain/shiboleet/lib/assets"
-	"github.com/gobuffalo/logger"
+	"github.com/duckbrain/shiboleet/lib/config"
 	"github.com/gobuffalo/pop/v5"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 )
 
 type Config struct {
-	// Environment the application will be running in, eg: "development" and "production"
-	Environment string
-
-	// Server options
-	ListenAddr string // Address the web server will listen on
-	Host       string // Absolute URL the application will be accessed through
-
-	LogLevel logger.Level
-
-	Database *pop.ConnectionDetails
-
-	Assets assets.Config
+	config.Config
 }
 
 type Provider struct {

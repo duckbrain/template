@@ -31,8 +31,8 @@ This repo is to set up a template I can clone for new projects. Parts may be ref
     - https://github.com/volatiletech/authboss ?
     - https://github.com/avelino/awesome-go#authentication-and-oauth
   - [ ] model/migration/dblayer code-generator
-  - [ ] cobra for built-in CLI
-  - [ ] database migrations
+  - [x] cobra for built-in CLI
+  - [x] database migrations
   - [ ] HTML templating w/ VScode syntax support
 - Front-end (Typescript/Vue)
   - [ ] eslint? (publish a preset?)

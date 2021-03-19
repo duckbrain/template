@@ -2,8 +2,9 @@ package main
 
 import (
 	"github.com/duckbrain/shiboleet/cmd"
+	"github.com/duckbrain/shiboleet/lib/runner"
 )
 
 func main() {
-	cmd.Run()
+	runner.Main(cmd.RootCmd)
 }
