@@ -42,8 +42,15 @@ var BoilCmd = &cobra.Command{
 			},
 			OutFolder: "models",
 			PkgName:   "models",
-			Imports:   importers.NewDefaultImports(),
 			Wipe:      true,
+			Imports:   importers.NewDefaultImports(),
+			TypeReplaces: []boilingcore.TypeReplace{
+				{
+					Match:   drivers.Column{DBType: "uuid"},
+					Replace: drivers.Column{Type: "uuid.UUID"},
+					Imports: importers.Set{ThirdParty: importers.List{`"github.com/gofrs/uuid"`}},
+				},
+			},
 		}
 		core, err := boilingcore.New(config)
 		if err != nil {

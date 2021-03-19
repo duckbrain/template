@@ -3,7 +3,18 @@ type Query {
     users: [User!]
 }
 
-type User {
-    name: String
-    username: String
+type Mutation {
+    createUser(input: [CreateUserInput!]!): CreateUserPayload
+    updateUser(input: [UpdateUserInput!]!): UpdateUserPayload
+    deleteUser(id: [ID!]!): DeleteUserPayload
 }
+
+directive @goModel(model: String, models: [String!]) on OBJECT
+    | INPUT_OBJECT
+    | SCALAR
+    | ENUM
+    | INTERFACE
+    | UNION
+
+directive @goField(forceResolver: Boolean, name: String) on INPUT_FIELD_DEFINITION
+    | FIELD_DEFINITION

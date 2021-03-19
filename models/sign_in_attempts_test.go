@@ -514,7 +514,7 @@ func testSignInAttemptToOneUserUsingUser(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	local.UserID = foreign.ID
+	queries.Assign(&local.UserID, foreign.ID)
 	if err := local.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
@@ -524,7 +524,7 @@ func testSignInAttemptToOneUserUsingUser(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if check.ID != foreign.ID {
+	if !queries.Equal(check.ID, foreign.ID) {
 		t.Errorf("want: %v, got %v", foreign.ID, check.ID)
 	}
 
@@ -586,7 +586,7 @@ func testSignInAttemptToOneSetOpUserUsingUser(t *testing.T) {
 		if x.R.SignInAttempts[0] != &a {
 			t.Error("failed to append to foreign relationship struct")
 		}
-		if a.UserID != x.ID {
+		if !queries.Equal(a.UserID, x.ID) {
 			t.Error("foreign key was wrong value", a.UserID)
 		}
 
@@ -597,7 +597,7 @@ func testSignInAttemptToOneSetOpUserUsingUser(t *testing.T) {
 			t.Fatal("failed to reload", err)
 		}
 
-		if a.UserID != x.ID {
+		if !queries.Equal(a.UserID, x.ID) {
 			t.Error("foreign key was wrong value", a.UserID, x.ID)
 		}
 	}

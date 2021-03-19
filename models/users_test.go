@@ -519,9 +519,8 @@ func testUserToManySignInAttempts(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	b.UserID = a.ID
-	c.UserID = a.ID
-
+	queries.Assign(&b.UserID, a.ID)
+	queries.Assign(&c.UserID, a.ID)
 	if err = b.Insert(ctx, tx, boil.Infer()); err != nil {
 		t.Fatal(err)
 	}
@@ -536,10 +535,10 @@ func testUserToManySignInAttempts(t *testing.T) {
 
 	bFound, cFound := false, false
 	for _, v := range check {
-		if v.UserID == b.UserID {
+		if queries.Equal(v.UserID, b.UserID) {
 			bFound = true
 		}
-		if v.UserID == c.UserID {
+		if queries.Equal(v.UserID, c.UserID) {
 			cFound = true
 		}
 	}
@@ -617,10 +616,10 @@ func testUserToManyAddOpSignInAttempts(t *testing.T) {
 		first := x[0]
 		second := x[1]
 
-		if a.ID != first.UserID {
+		if !queries.Equal(a.ID, first.UserID) {
 			t.Error("foreign key was wrong value", a.ID, first.UserID)
 		}
-		if a.ID != second.UserID {
+		if !queries.Equal(a.ID, second.UserID) {
 			t.Error("foreign key was wrong value", a.ID, second.UserID)
 		}
 

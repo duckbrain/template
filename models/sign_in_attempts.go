@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/friendsofgo/errors"
+	"github.com/gofrs/uuid"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
@@ -23,8 +24,8 @@ import (
 
 // SignInAttempt is an object representing the database table.
 type SignInAttempt struct {
-	ID        string    `boil:"id" json:"id" toml:"id" yaml:"id"`
-	UserID    string    `boil:"user_id" json:"user_id" toml:"user_id" yaml:"user_id"`
+	ID        uuid.UUID `boil:"id" json:"id" toml:"id" yaml:"id"`
+	UserID    uuid.UUID `boil:"user_id" json:"user_id" toml:"user_id" yaml:"user_id"`
 	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	UpdatedAt time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 
@@ -46,27 +47,25 @@ var SignInAttemptColumns = struct {
 
 // Generated where
 
-type whereHelperstring struct{ field string }
+type whereHelperuuid_UUID struct{ field string }
 
-func (w whereHelperstring) EQ(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
-func (w whereHelperstring) NEQ(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
-func (w whereHelperstring) LT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
-func (w whereHelperstring) LTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
-func (w whereHelperstring) GT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
-func (w whereHelperstring) GTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
-func (w whereHelperstring) IN(slice []string) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
+func (w whereHelperuuid_UUID) EQ(x uuid.UUID) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.EQ, x)
 }
-func (w whereHelperstring) NIN(slice []string) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
+func (w whereHelperuuid_UUID) NEQ(x uuid.UUID) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.NEQ, x)
+}
+func (w whereHelperuuid_UUID) LT(x uuid.UUID) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LT, x)
+}
+func (w whereHelperuuid_UUID) LTE(x uuid.UUID) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LTE, x)
+}
+func (w whereHelperuuid_UUID) GT(x uuid.UUID) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GT, x)
+}
+func (w whereHelperuuid_UUID) GTE(x uuid.UUID) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GTE, x)
 }
 
 type whereHelpertime_Time struct{ field string }
@@ -91,13 +90,13 @@ func (w whereHelpertime_Time) GTE(x time.Time) qm.QueryMod {
 }
 
 var SignInAttemptWhere = struct {
-	ID        whereHelperstring
-	UserID    whereHelperstring
+	ID        whereHelperuuid_UUID
+	UserID    whereHelperuuid_UUID
 	CreatedAt whereHelpertime_Time
 	UpdatedAt whereHelpertime_Time
 }{
-	ID:        whereHelperstring{field: "\"sign_in_attempts\".\"id\""},
-	UserID:    whereHelperstring{field: "\"sign_in_attempts\".\"user_id\""},
+	ID:        whereHelperuuid_UUID{field: "\"sign_in_attempts\".\"id\""},
+	UserID:    whereHelperuuid_UUID{field: "\"sign_in_attempts\".\"user_id\""},
 	CreatedAt: whereHelpertime_Time{field: "\"sign_in_attempts\".\"created_at\""},
 	UpdatedAt: whereHelpertime_Time{field: "\"sign_in_attempts\".\"updated_at\""},
 }
@@ -435,7 +434,9 @@ func (signInAttemptL) LoadUser(ctx context.Context, e boil.ContextExecutor, sing
 		if object.R == nil {
 			object.R = &signInAttemptR{}
 		}
-		args = append(args, object.UserID)
+		if !queries.IsNil(object.UserID) {
+			args = append(args, object.UserID)
+		}
 
 	} else {
 	Outer:
@@ -445,12 +446,14 @@ func (signInAttemptL) LoadUser(ctx context.Context, e boil.ContextExecutor, sing
 			}
 
 			for _, a := range args {
-				if a == obj.UserID {
+				if queries.Equal(a, obj.UserID) {
 					continue Outer
 				}
 			}
 
-			args = append(args, obj.UserID)
+			if !queries.IsNil(obj.UserID) {
+				args = append(args, obj.UserID)
+			}
 
 		}
 	}
@@ -508,7 +511,7 @@ func (signInAttemptL) LoadUser(ctx context.Context, e boil.ContextExecutor, sing
 
 	for _, local := range slice {
 		for _, foreign := range resultSlice {
-			if local.UserID == foreign.ID {
+			if queries.Equal(local.UserID, foreign.ID) {
 				local.R.User = foreign
 				if foreign.R == nil {
 					foreign.R = &userR{}
@@ -549,7 +552,7 @@ func (o *SignInAttempt) SetUser(ctx context.Context, exec boil.ContextExecutor, 
 		return errors.Wrap(err, "failed to update local table")
 	}
 
-	o.UserID = related.ID
+	queries.Assign(&o.UserID, related.ID)
 	if o.R == nil {
 		o.R = &signInAttemptR{
 			User: related,
@@ -577,7 +580,7 @@ func SignInAttempts(mods ...qm.QueryMod) signInAttemptQuery {
 
 // FindSignInAttempt retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
-func FindSignInAttempt(ctx context.Context, exec boil.ContextExecutor, iD string, selectCols ...string) (*SignInAttempt, error) {
+func FindSignInAttempt(ctx context.Context, exec boil.ContextExecutor, iD uuid.UUID, selectCols ...string) (*SignInAttempt, error) {
 	signInAttemptObj := &SignInAttempt{}
 
 	sel := "*"
@@ -1095,7 +1098,7 @@ func (o *SignInAttemptSlice) ReloadAll(ctx context.Context, exec boil.ContextExe
 }
 
 // SignInAttemptExists checks if the SignInAttempt row exists.
-func SignInAttemptExists(ctx context.Context, exec boil.ContextExecutor, iD string) (bool, error) {
+func SignInAttemptExists(ctx context.Context, exec boil.ContextExecutor, iD uuid.UUID) (bool, error) {
 	var exists bool
 	sql := "select exists(select 1 from \"sign_in_attempts\" where \"id\"=$1 limit 1)"
 

@@ -1,0 +1,33 @@
+
+type User {
+    name: String
+    username: String
+}
+
+input CreateUserInput @goModel(model:"github.com/duckbrain/shiboleet/models.User") {
+    id: ID
+    name: String! = ""
+    username: String!
+}
+
+type CreateUserPayload {
+    id: ID
+    item: User
+    items: [User]!
+}
+
+input UpdateUserInput  @goModel(model:"github.com/duckbrain/shiboleet/models.User") {
+    id: ID!
+    name: String! = ""
+    username: String!
+}
+
+type UpdateUserPayload {
+    item: User
+    items: [User]!
+}
+
+type DeleteUserPayload {
+    id: ID
+    ids: [ID]!
+}

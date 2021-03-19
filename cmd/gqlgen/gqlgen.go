@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/duckbrain/buffalo-gqlgen/gqlgen/plugin"
 	"github.com/duckbrain/shiboleet/lib/runner"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -16,7 +17,7 @@ var GqlGenCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "load config")
 		}
-		return api.Generate(cfg)
+		return api.Generate(cfg, api.AddPlugin(plugin.Scalar{}))
 		// api.AddPlugin(gbgen.NewConvertPlugin(
 		// 	output,   // directory where convert.go, convert_input.go and preload.go should live
 		// 	backend,  // directory where sqlboiler files are put
