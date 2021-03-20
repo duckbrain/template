@@ -1144,3 +1144,5 @@ func UserExists(ctx context.Context, exec boil.ContextExecutor, iD uuid.UUID) (b
 
 	return exists, nil
 }
+
+// This is my test content

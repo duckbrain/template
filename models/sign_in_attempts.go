@@ -1116,3 +1116,5 @@ func SignInAttemptExists(ctx context.Context, exec boil.ContextExecutor, iD uuid
 
 	return exists, nil
 }
+
+// This is my test content

@@ -1,6 +1,9 @@
 package main
 
 import (
+	"os"
+	"path/filepath"
+
 	"github.com/duckbrain/shiboleet/lib/config"
 	"github.com/duckbrain/shiboleet/lib/runner"
 	"github.com/pkg/errors"
@@ -9,11 +12,33 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/drivers"
 	_ "github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-psql/driver"
 	"github.com/volatiletech/sqlboiler/v4/importers"
+	"github.com/volatiletech/sqlboiler/v4/templatebin"
 )
 
 const AppName = "shiboleet"
 
 var conf = config.Default(AppName)
+
+var defaultTemplatesOut = "lib/templates/boil_default"
+
+func makeTemplates() error {
+	_, err := os.Stat(defaultTemplatesOut)
+	if !os.IsNotExist(err) {
+		return err
+	}
+	for _, name := range templatebin.AssetNames() {
+		p := filepath.Join(defaultTemplatesOut, name)
+		err := os.MkdirAll(filepath.Dir(p), os.ModePerm)
+		if err != nil {
+			return err
+		}
+		err = os.WriteFile(p, templatebin.MustAsset(name), os.ModePerm)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
 var BoilCmd = &cobra.Command{
 	Use: "boil",
@@ -21,6 +46,9 @@ var BoilCmd = &cobra.Command{
 		return config.Load(AppName, &conf)
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := makeTemplates(); err != nil {
+			return err
+		}
 		boilDriver := conf.Database.Driver
 		if boilDriver == "" {
 			boilDriver = conf.Database.Dialect
@@ -50,6 +78,11 @@ var BoilCmd = &cobra.Command{
 					Replace: drivers.Column{Type: "uuid.UUID"},
 					Imports: importers.Set{ThirdParty: importers.List{`"github.com/gofrs/uuid"`}},
 				},
+			},
+			TemplateDirs: []string{
+				filepath.Join(defaultTemplatesOut, "templates"),
+				filepath.Join(defaultTemplatesOut, "templates_test"),
+				"lib/templates/boil_custom/templates",
 			},
 		}
 		core, err := boilingcore.New(config)

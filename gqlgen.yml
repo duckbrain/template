@@ -25,6 +25,12 @@ autobind:
 # modelgen, the others will be allowed when binding to fields. Configure them to
 # your liking
 models:
+  Query:
+    model:
+      - github.com/duckbrain/shiboleet/models/repo.Repository
+  Mutation:
+    model:
+      - github.com/duckbrain/shiboleet/models/repo.Repository
   ID:
     model:
       - github.com/99designs/gqlgen/graphql.ID
