@@ -306,9 +306,13 @@ type User {
     username: String
 }
 
+input UserFilter {
+    search: String! = ""
+}
+
 input CreateUserInput @goModel(model:"github.com/duckbrain/shiboleet/models.User") {
     id: ID
-    name: String! = ""
+    name: String!
     username: String!
 }
 
@@ -320,8 +324,8 @@ type CreateUserPayload {
 
 input UpdateUserInput  @goModel(model:"github.com/duckbrain/shiboleet/models.User") {
     id: ID!
-    name: String! = ""
-    username: String!
+    name: String
+    username: String
 }
 
 type UpdateUserPayload {
@@ -2131,7 +2135,7 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			it.Name, err = ec.unmarshalOString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2139,7 +2143,27 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("username"))
-			it.Username, err = ec.unmarshalNString2string(ctx, v)
+			it.Username, err = ec.unmarshalOString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUserFilter(ctx context.Context, obj interface{}) (models.UserFilter, error) {
+	var it models.UserFilter
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "search":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("search"))
+			it.Search, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}

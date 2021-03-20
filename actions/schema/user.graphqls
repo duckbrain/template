@@ -4,9 +4,13 @@ type User {
     username: String
 }
 
+input UserFilter {
+    search: String! = ""
+}
+
 input CreateUserInput @goModel(model:"github.com/duckbrain/shiboleet/models.User") {
     id: ID
-    name: String! = ""
+    name: String!
     username: String!
 }
 
@@ -18,8 +22,8 @@ type CreateUserPayload {
 
 input UpdateUserInput  @goModel(model:"github.com/duckbrain/shiboleet/models.User") {
     id: ID!
-    name: String! = ""
-    username: String!
+    name: String
+    username: String
 }
 
 type UpdateUserPayload {

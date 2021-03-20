@@ -17,3 +17,7 @@ type UpdateUserPayload struct {
 	Item  *User   `json:"item"`
 	Items []*User `json:"items"`
 }
+
+type UserFilter struct {
+	Search string `json:"search"`
+}
