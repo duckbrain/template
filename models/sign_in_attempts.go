@@ -1117,4 +1117,93 @@ func SignInAttemptExists(ctx context.Context, exec boil.ContextExecutor, iD uuid
 	return exists, nil
 }
 
-// This is my test content
+type CreateSignInAttemptPayload struct {
+	Items []*SignInAttempt
+}
+
+func (p CreateSignInAttemptPayload) Item() *SignInAttempt {
+	if len(p.Items) > 0 {
+		return p.Items[0]
+	}
+	return nil
+}
+
+func (p CreateSignInAttemptPayload) ID() *uuid.UUID {
+	item := p.Item()
+	if item == nil {
+		return nil
+	}
+	return &item.ID
+}
+
+func (r *Repository) CreateSignInAttempts(ctx context.Context, input []*SignInAttempt) (*CreateSignInAttemptPayload, error) {
+	res := make([]*SignInAttempt, 0, len(input))
+	for _, m := range input {
+		if m.ID == uuid.Nil {
+			var err error
+			m.ID, err = uuid.NewV4()
+			if err != nil {
+				return nil, err
+			}
+		}
+		err := m.Insert(ctx, r.DB(ctx), boil.Infer())
+		if err != nil {
+			return nil, err
+		}
+		res = append(res, m)
+	}
+	return &CreateSignInAttemptPayload{Items: res}, nil
+}
+
+type UpdateSignInAttemptPayload struct {
+	Items []*SignInAttempt
+}
+
+func (p UpdateSignInAttemptPayload) Item() *SignInAttempt {
+	if len(p.Items) > 0 {
+		return p.Items[0]
+	}
+	return nil
+}
+
+func (r *Repository) UpdateSignInAttempts(ctx context.Context, input []*SignInAttempt) (*UpdateSignInAttemptPayload, error) {
+	res := make([]*SignInAttempt, 0, len(input))
+	for _, m := range input {
+		_, err := m.Update(ctx, r.DB(ctx), boil.Infer())
+
+		if err != nil {
+			return nil, err
+		}
+		res = append(res, m)
+	}
+	return &UpdateSignInAttemptPayload{Items: res}, nil
+}
+
+type DeleteSignInAttemptPayload struct {
+	IDs []uuid.UUID
+}
+
+func (p DeleteSignInAttemptPayload) ID() *uuid.UUID {
+	if len(p.IDs) > 0 {
+		return &p.IDs[0]
+	}
+	return nil
+}
+
+func (r *Repository) DeleteSignInAttempts(ctx context.Context, input []uuid.UUID) (*DeleteSignInAttemptPayload, error) {
+	res := make([]uuid.UUID, 0, len(input))
+	for _, id := range input {
+		_, err := (&SignInAttempt{ID: id}).Delete(ctx, r.DB(ctx))
+
+		if err != nil {
+			return nil, err
+		}
+		res = append(res, id)
+	}
+	return &DeleteSignInAttemptPayload{IDs: res}, nil
+}
+
+func (r *Repository) SignInAttempts(ctx context.Context, filter SignInAttemptFilter) ([]*SignInAttempt, error) {
+	// TODO Apply filters
+	return SignInAttempts().All(ctx, r.DB(ctx))
+}

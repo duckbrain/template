@@ -35,3 +35,8 @@ type DeleteUserPayload {
     id: ID
     ids: [ID]!
 }
+
+
+input SignInAttemptFilter {
+    userID: ID
+}

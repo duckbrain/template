@@ -1145,4 +1145,93 @@ func UserExists(ctx context.Context, exec boil.ContextExecutor, iD uuid.UUID) (b
 	return exists, nil
 }
 
-// This is my test content
+type CreateUserPayload struct {
+	Items []*User
+}
+
+func (p CreateUserPayload) Item() *User {
+	if len(p.Items) > 0 {
+		return p.Items[0]
+	}
+	return nil
+}
+
+func (p CreateUserPayload) ID() *uuid.UUID {
+	item := p.Item()
+	if item == nil {
+		return nil
+	}
+	return &item.ID
+}
+
+func (r *Repository) CreateUsers(ctx context.Context, input []*User) (*CreateUserPayload, error) {
+	res := make([]*User, 0, len(input))
+	for _, m := range input {
+		if m.ID == uuid.Nil {
+			var err error
+			m.ID, err = uuid.NewV4()
+			if err != nil {
+				return nil, err
+			}
+		}
+		err := m.Insert(ctx, r.DB(ctx), boil.Infer())
+		if err != nil {
+			return nil, err
+		}
+		res = append(res, m)
+	}
+	return &CreateUserPayload{Items: res}, nil
+}
+
+type UpdateUserPayload struct {
+	Items []*User
+}
+
+func (p UpdateUserPayload) Item() *User {
+	if len(p.Items) > 0 {
+		return p.Items[0]
+	}
+	return nil
+}
+
+func (r *Repository) UpdateUsers(ctx context.Context, input []*User) (*UpdateUserPayload, error) {
+	res := make([]*User, 0, len(input))
+	for _, m := range input {
+		_, err := m.Update(ctx, r.DB(ctx), boil.Infer())
+
+		if err != nil {
+			return nil, err
+		}
+		res = append(res, m)
+	}
+	return &UpdateUserPayload{Items: res}, nil
+}
+
+type DeleteUserPayload struct {
+	IDs []uuid.UUID
+}
+
+func (p DeleteUserPayload) ID() *uuid.UUID {
+	if len(p.IDs) > 0 {
+		return &p.IDs[0]
+	}
+	return nil
+}
+
+func (r *Repository) DeleteUsers(ctx context.Context, input []uuid.UUID) (*DeleteUserPayload, error) {
+	res := make([]uuid.UUID, 0, len(input))
+	for _, id := range input {
+		_, err := (&User{ID: id}).Delete(ctx, r.DB(ctx))
+
+		if err != nil {
+			return nil, err
+		}
+		res = append(res, id)
+	}
+	return &DeleteUserPayload{IDs: res}, nil
+}
+
+func (r *Repository) Users(ctx context.Context, filter UserFilter) ([]*User, error) {
+	// TODO Apply filters
+	return Users().All(ctx, r.DB(ctx))
+}

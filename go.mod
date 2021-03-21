@@ -6,7 +6,7 @@ require (
 	github.com/99designs/gqlgen v0.13.0
 	github.com/Masterminds/semver/v3 v3.1.1 // indirect
 	github.com/agnivade/levenshtein v1.1.0 // indirect
-	github.com/duckbrain/buffalo-gqlgen v0.0.0-20201015184915-bd6f482392c0
+	github.com/duckbrain/buffalo-gqlgen v0.0.0-20210320224454-daf4959d3133
 	github.com/fatih/color v1.10.0 // indirect
 	github.com/friendsofgo/errors v0.9.2
 	github.com/fsnotify/fsnotify v1.4.9 // indirect

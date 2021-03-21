@@ -53,12 +53,12 @@ type ComplexityRoot struct {
 
 	DeleteUserPayload struct {
 		ID  func(childComplexity int) int
-		Ids func(childComplexity int) int
+		IDs func(childComplexity int) int
 	}
 
 	Mutation struct {
 		CreateUser func(childComplexity int, input []*models.User) int
-		DeleteUser func(childComplexity int, id []string) int
+		DeleteUser func(childComplexity int, id []uuid.UUID) int
 		UpdateUser func(childComplexity int, input []*models.User) int
 	}
 
@@ -81,7 +81,7 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	CreateUser(ctx context.Context, input []*models.User) (*models.CreateUserPayload, error)
 	UpdateUser(ctx context.Context, input []*models.User) (*models.UpdateUserPayload, error)
-	DeleteUser(ctx context.Context, id []string) (*models.DeleteUserPayload, error)
+	DeleteUser(ctx context.Context, id []uuid.UUID) (*models.DeleteUserPayload, error)
 }
 type QueryResolver interface {
 	Hello(ctx context.Context) (string, error)
@@ -132,11 +132,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		return e.complexity.DeleteUserPayload.ID(childComplexity), true
 
 	case "DeleteUserPayload.ids":
-		if e.complexity.DeleteUserPayload.Ids == nil {
+		if e.complexity.DeleteUserPayload.IDs == nil {
 			break
 		}
 
-		return e.complexity.DeleteUserPayload.Ids(childComplexity), true
+		return e.complexity.DeleteUserPayload.IDs(childComplexity), true
 
 	case "Mutation.createUser":
 		if e.complexity.Mutation.CreateUser == nil {
@@ -160,7 +160,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteUser(childComplexity, args["id"].([]string)), true
+		return e.complexity.Mutation.DeleteUser(childComplexity, args["id"].([]uuid.UUID)), true
 
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
@@ -336,6 +336,11 @@ type UpdateUserPayload {
 type DeleteUserPayload {
     id: ID
     ids: [ID]!
+}
+
+
+input SignInAttemptFilter {
+    userID: ID
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -362,10 +367,10 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_deleteUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 []string
+	var arg0 []uuid.UUID
 	if tmp, ok := rawArgs["id"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2ᚕstringᚄ(ctx, tmp)
+		arg0, err = ec.unmarshalNID2ᚕgithubᚗcomᚋgofrsᚋuuidᚐUUIDᚄ(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -453,14 +458,14 @@ func (ec *executionContext) _CreateUserPayload_id(ctx context.Context, field gra
 		Object:     "CreateUserPayload",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
+		IsMethod:   true,
 		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
+		return obj.ID(), nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -469,9 +474,9 @@ func (ec *executionContext) _CreateUserPayload_id(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(*uuid.UUID)
 	fc.Result = res
-	return ec.marshalOID2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalOID2ᚖgithubᚗcomᚋgofrsᚋuuidᚐUUID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _CreateUserPayload_item(ctx context.Context, field graphql.CollectedField, obj *models.CreateUserPayload) (ret graphql.Marshaler) {
@@ -485,14 +490,14 @@ func (ec *executionContext) _CreateUserPayload_item(ctx context.Context, field g
 		Object:     "CreateUserPayload",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
+		IsMethod:   true,
 		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Item, nil
+		return obj.Item(), nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -552,14 +557,14 @@ func (ec *executionContext) _DeleteUserPayload_id(ctx context.Context, field gra
 		Object:     "DeleteUserPayload",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
+		IsMethod:   true,
 		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
+		return obj.ID(), nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -568,9 +573,9 @@ func (ec *executionContext) _DeleteUserPayload_id(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(*uuid.UUID)
 	fc.Result = res
-	return ec.marshalOID2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalOID2ᚖgithubᚗcomᚋgofrsᚋuuidᚐUUID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _DeleteUserPayload_ids(ctx context.Context, field graphql.CollectedField, obj *models.DeleteUserPayload) (ret graphql.Marshaler) {
@@ -591,7 +596,7 @@ func (ec *executionContext) _DeleteUserPayload_ids(ctx context.Context, field gr
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Ids, nil
+		return obj.IDs, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -603,9 +608,9 @@ func (ec *executionContext) _DeleteUserPayload_ids(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.([]uuid.UUID)
 	fc.Result = res
-	return ec.marshalNID2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalNID2ᚕgithubᚗcomᚋgofrsᚋuuidᚐUUID(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -711,7 +716,7 @@ func (ec *executionContext) _Mutation_deleteUser(ctx context.Context, field grap
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteUser(rctx, args["id"].([]string))
+		return ec.resolvers.Mutation().DeleteUser(rctx, args["id"].([]uuid.UUID))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -874,14 +879,14 @@ func (ec *executionContext) _UpdateUserPayload_item(ctx context.Context, field g
 		Object:     "UpdateUserPayload",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
+		IsMethod:   true,
 		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Item, nil
+		return obj.Item(), nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2117,6 +2122,26 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputSignInAttemptFilter(ctx context.Context, obj interface{}) (models.SignInAttemptFilter, error) {
+	var it models.SignInAttemptFilter
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "userID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
+			it.UserID, err = ec.unmarshalOID2ᚖgithubᚗcomᚋgofrsᚋuuidᚐUUID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, obj interface{}) (models.User, error) {
 	var it models.User
 	var asMap = obj.(map[string]interface{})
@@ -2684,22 +2709,7 @@ func (ec *executionContext) marshalNID2githubᚗcomᚋgofrsᚋuuidᚐUUID(ctx co
 	return res
 }
 
-func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
-	res, err := graphql.UnmarshalID(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
-	res := graphql.MarshalID(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-	}
-	return res
-}
-
-func (ec *executionContext) unmarshalNID2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
+func (ec *executionContext) unmarshalNID2ᚕgithubᚗcomᚋgofrsᚋuuidᚐUUID(ctx context.Context, v interface{}) ([]uuid.UUID, error) {
 	var vSlice []interface{}
 	if v != nil {
 		if tmp1, ok := v.([]interface{}); ok {
@@ -2709,10 +2719,10 @@ func (ec *executionContext) unmarshalNID2ᚕstringᚄ(ctx context.Context, v int
 		}
 	}
 	var err error
-	res := make([]string, len(vSlice))
+	res := make([]uuid.UUID, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNID2string(ctx, vSlice[i])
+		res[i], err = ec.unmarshalOID2githubᚗcomᚋgofrsᚋuuidᚐUUID(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -2720,16 +2730,16 @@ func (ec *executionContext) unmarshalNID2ᚕstringᚄ(ctx context.Context, v int
 	return res, nil
 }
 
-func (ec *executionContext) marshalNID2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+func (ec *executionContext) marshalNID2ᚕgithubᚗcomᚋgofrsᚋuuidᚐUUID(ctx context.Context, sel ast.SelectionSet, v []uuid.UUID) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	for i := range v {
-		ret[i] = ec.marshalNID2string(ctx, sel, v[i])
+		ret[i] = ec.marshalOID2githubᚗcomᚋgofrsᚋuuidᚐUUID(ctx, sel, v[i])
 	}
 
 	return ret
 }
 
-func (ec *executionContext) unmarshalNID2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {
+func (ec *executionContext) unmarshalNID2ᚕgithubᚗcomᚋgofrsᚋuuidᚐUUIDᚄ(ctx context.Context, v interface{}) ([]uuid.UUID, error) {
 	var vSlice []interface{}
 	if v != nil {
 		if tmp1, ok := v.([]interface{}); ok {
@@ -2739,10 +2749,10 @@ func (ec *executionContext) unmarshalNID2ᚕᚖstring(ctx context.Context, v int
 		}
 	}
 	var err error
-	res := make([]*string, len(vSlice))
+	res := make([]uuid.UUID, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOID2ᚖstring(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNID2githubᚗcomᚋgofrsᚋuuidᚐUUID(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -2750,10 +2760,10 @@ func (ec *executionContext) unmarshalNID2ᚕᚖstring(ctx context.Context, v int
 	return res, nil
 }
 
-func (ec *executionContext) marshalNID2ᚕᚖstring(ctx context.Context, sel ast.SelectionSet, v []*string) graphql.Marshaler {
+func (ec *executionContext) marshalNID2ᚕgithubᚗcomᚋgofrsᚋuuidᚐUUIDᚄ(ctx context.Context, sel ast.SelectionSet, v []uuid.UUID) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	for i := range v {
-		ret[i] = ec.marshalOID2ᚖstring(ctx, sel, v[i])
+		ret[i] = ec.marshalNID2githubᚗcomᚋgofrsᚋuuidᚐUUID(ctx, sel, v[i])
 	}
 
 	return ret
@@ -3123,19 +3133,19 @@ func (ec *executionContext) marshalOID2githubᚗcomᚋgofrsᚋuuidᚐUUID(ctx co
 	return scalars.MarshalUUID(v)
 }
 
-func (ec *executionContext) unmarshalOID2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
+func (ec *executionContext) unmarshalOID2ᚖgithubᚗcomᚋgofrsᚋuuidᚐUUID(ctx context.Context, v interface{}) (*uuid.UUID, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := graphql.UnmarshalID(v)
+	res, err := scalars.UnmarshalUUID(v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
+func (ec *executionContext) marshalOID2ᚖgithubᚗcomᚋgofrsᚋuuidᚐUUID(ctx context.Context, sel ast.SelectionSet, v *uuid.UUID) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return graphql.MarshalID(*v)
+	return scalars.MarshalUUID(*v)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

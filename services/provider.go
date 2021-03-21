@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/duckbrain/shiboleet/lib/config"
+	"github.com/duckbrain/shiboleet/models"
 	"github.com/gobuffalo/pop/v5"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 )
@@ -13,7 +14,7 @@ type Config struct {
 type Provider struct {
 	AppName string
 	Config
-	DatabaseConnection *pop.Connection
+	Repository *models.Repository
 }
 
 func (p Provider) Must() *Provider {
@@ -29,14 +30,7 @@ func (p *Provider) Init() error {
 	if err != nil {
 		return err
 	}
-	p.DatabaseConnection = c
+	p.Repository = &models.Repository{Executor: c.Store.(boil.ContextExecutor)}
 
 	return c.Open()
-}
-
-func (p *Provider) DB() boil.ContextExecutor {
-	if p.DatabaseConnection.TX != nil {
-		return p.DatabaseConnection.TX
-	}
-	return p.DatabaseConnection.Store.(boil.ContextExecutor)
 }

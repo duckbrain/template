@@ -27,18 +27,11 @@ autobind:
 models:
   Query:
     model:
-      - github.com/duckbrain/shiboleet/models/repo.Repository
+      - github.com/duckbrain/shiboleet/models.Repository
   Mutation:
     model:
-      - github.com/duckbrain/shiboleet/models/repo.Repository
+      - github.com/duckbrain/shiboleet/models.Repository
   ID:
     model:
-      - github.com/99designs/gqlgen/graphql.ID
-      - github.com/99designs/gqlgen/graphql.Int
-      - github.com/99designs/gqlgen/graphql.Int64
-      - github.com/99designs/gqlgen/graphql.Int32
-  Int:
-    model:
-      - github.com/99designs/gqlgen/graphql.Int
-      - github.com/99designs/gqlgen/graphql.Int64
-      - github.com/99designs/gqlgen/graphql.Int32
+      - github.com/duckbrain/buffalo-gqlgen/scalars.UUID
+      - github.com/duckbrain/buffalo-gqlgen/scalars.NullsUUID

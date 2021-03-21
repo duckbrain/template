@@ -5,47 +5,21 @@ package gql
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/duckbrain/shiboleet/models"
 	"github.com/gofrs/uuid"
-	"github.com/volatiletech/sqlboiler/v4/boil"
 )
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input []*models.User) (*models.CreateUserPayload, error) {
-	res := make([]*models.User, 0, len(input))
-	for _, m := range input {
-		if m.ID == uuid.Nil {
-			var err error
-			m.ID, err = uuid.NewV4()
-			if err != nil {
-				return nil, err
-			}
-		}
-		err := m.Insert(ctx, r.DB(), boil.Infer())
-		if err != nil {
-			return nil, err
-		}
-		res = append(res, m)
-	}
-	return &models.CreateUserPayload{Items: res}, nil
+	return r.Repository.CreateUsers(ctx, input)
 }
 
 func (r *mutationResolver) UpdateUser(ctx context.Context, input []*models.User) (*models.UpdateUserPayload, error) {
-	res := make([]*models.User, 0, len(input))
-	for _, m := range input {
-		_, err := m.Update(ctx, r.DB(), boil.Infer())
-
-		if err != nil {
-			return nil, err
-		}
-		res = append(res, m)
-	}
-	return &models.UpdateUserPayload{Items: res}, nil
+	return r.Repository.UpdateUsers(ctx, input)
 }
 
-func (r *mutationResolver) DeleteUser(ctx context.Context, id []string) (*models.DeleteUserPayload, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) DeleteUser(ctx context.Context, id []uuid.UUID) (*models.DeleteUserPayload, error) {
+	return r.Repository.DeleteUsers(ctx, id)
 }
 
 func (r *queryResolver) Hello(ctx context.Context) (string, error) {
@@ -53,7 +27,7 @@ func (r *queryResolver) Hello(ctx context.Context) (string, error) {
 }
 
 func (r *queryResolver) Users(ctx context.Context) ([]*models.User, error) {
-	return models.Users().All(ctx, r.DB())
+	return r.Repository.Users(ctx, models.UserFilter{})
 }
 
 // Mutation returns MutationResolver implementation.
